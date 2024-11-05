@@ -7,6 +7,8 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
+#include <filesystem>
+
 #include "include/stb_image.h"
 
 
@@ -16,7 +18,10 @@ const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
 
 float mixin = 0.2f;
-float color = 0.0f;
+
+glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 
 void processInput(GLFWwindow * window);
 void framebuffer_size_callback(GLFWwindow * window, int width, int height);
@@ -46,7 +51,7 @@ int main() {
 
     glEnable(GL_DEPTH_TEST);
 
-    Shader ourShader("C:/Users/USER/CLionProjects/RoseEngineC/shaders/vertex.vert", "C:/Users/USER/CLionProjects/RoseEngineC/shaders/fragment.frag");
+    Shader ourShader("../shaders/vertex.vert", "../shaders/fragment.frag");
 
     float vertices[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -120,7 +125,7 @@ int main() {
 
     // texture coord attribute
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(1);
 
     // load and create a texture
     unsigned int texture1, texture2;
@@ -135,7 +140,7 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     int width, height, nrChannels;
-    unsigned char *data = stbi_load("C:/Users/USER/CLionProjects/RoseEngineC/assets/container.jpg", &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load("../assets/container.jpg", &width, &height, &nrChannels, 0);
     if (data)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -158,7 +163,7 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     stbi_set_flip_vertically_on_load(true);
-    data = stbi_load("C:/Users/USER/CLionProjects/RoseEngineC/assets/awesomeface.png", &width, &height, &nrChannels, 0);
+    data = stbi_load("../assets/awesomeface.png", &width, &height, &nrChannels, 0);
     if (data)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -173,6 +178,10 @@ int main() {
     ourShader.use();
     ourShader.setInt("texture1", 0);
     ourShader.setInt("texture2", 1);
+
+
+    glm::mat4 projection = glm::perspective(glm::radians(80.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+    ourShader.setMat4("projection", projection);
 
     while(!glfwWindowShouldClose(window))
     {
@@ -189,39 +198,30 @@ int main() {
 
         ourShader.use();
 
-        glm::mat4 view = glm::mat4(1.0f);
-        glm::mat4 projection = glm::mat4(1.0f);
-        projection = glm::perspective(glm::radians(80.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
-        view = translate(view, glm::vec3(0.0f, 0.0f, -2.0f));
-        ourShader.setMat4("projection", projection);
+
+        glm::mat4 view;
+        view = lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        view = translate(view, glm::vec3(0.0f, 0.0f, -1.0f));
         ourShader.setMat4("view", view);
 
         glBindVertexArray(VAO);
-        int box = 0;
         for (unsigned int i = 0; i < 10; i++)
         {
             // calculate the model matrix for each object and pass it to shader before drawing
             glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
+            model = translate(model, cubePositions[i]);
             float angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            if (box == 0) {
-                model = rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(1.0f, 0.3f, 0.5f));
-                box = 3;
-            }
+            model = rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 
+            if (i % 3 == 0) {
+                model = rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(1.0f, 0.3f, 0.5f));
+            }
             ourShader.setMat4("model", model);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
-            box--;
         }
 
         ourShader.setFloat("mixin", mixin);
-        ourShader.setFloat("cock", color);
-        color+=0.01f;
-        if(color > 1.0f) {
-            color = 0.0f;
-        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -239,15 +239,24 @@ void processInput(GLFWwindow *window)
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-        mixin += 0.01f;
+        mixin += 0.001f;
         if (mixin >= 1.0f)
             mixin = 1.0f;
     }
     if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-        mixin -= 0.01f;
+        mixin -= 0.001f;
         if (mixin <= 0.0f)
             mixin = 0.0f;
     }
+    const float cameraSpeed = 0.0005f; // adjust accordingly
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        cameraPos += cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        cameraPos -= cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
