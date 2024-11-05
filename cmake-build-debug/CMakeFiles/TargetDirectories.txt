@@ -1,3 +1,0 @@
-C:/Users/alex8/CLionProjects/RoseEngineC/cmake-build-debug/CMakeFiles/RoseEngineC.dir
-C:/Users/alex8/CLionProjects/RoseEngineC/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/alex8/CLionProjects/RoseEngineC/cmake-build-debug/CMakeFiles/rebuild_cache.dir
