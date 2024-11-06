@@ -3,6 +3,7 @@ project(RoseEngineC)
 
 set(CMAKE_CXX_STANDARD 20)
 
+
 set(SOURCE_FILES main.cpp glad.c
         Shader.h
 )
