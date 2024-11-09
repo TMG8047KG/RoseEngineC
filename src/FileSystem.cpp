@@ -1,4 +1,5 @@
 #include "RoseEngineC/FileSystem.h"
+#include "RoseEngineC/Debug.h"
 
 namespace RoseEngineC
 {
@@ -15,7 +16,9 @@ namespace RoseEngineC
     void FileSystem::setWorkingDirectory(std::string &&path)
     {
         resetWorkingDirectory();
-        std::filesystem::current_path(path);
+        std::error_code error;
+        std::filesystem::current_path(path, error);
+        Debug::assertNoAbort(!error, "FileSystem::setWorkingDirectory:: invalid path");
     }
 
     std::filesystem::path FileSystem::gamePath;

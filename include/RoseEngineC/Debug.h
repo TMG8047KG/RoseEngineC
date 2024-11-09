@@ -9,7 +9,7 @@ namespace RoseEngineC
     {
     public:
         //writes an error message to the console if condition is false
-        static void assertNoAbort(bool &&condition, std::string &&message)
+        inline static void assertNoAbort(bool &&condition, std::string &&message)
         {
         #ifndef NDEBUG
             if(!condition)
