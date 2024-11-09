@@ -1,0 +1,20 @@
+# ninja log v6
+25	4359	7528777721657616	CMakeFiles/RoseEngineC.dir/src/glad.c.obj	5d7fc7560167c383
+116	4442	7528777722567455	CMakeFiles/RoseEngineC.dir/src/imgui/imgui_demo.cpp.obj	c6e3fc6a779d0fcb
+215	7324	7528777723557463	CMakeFiles/RoseEngineC.dir/src/imgui/imgui_widgets.cpp.obj	ff07d15fe306ee7c
+65	3516	7528777722057460	CMakeFiles/RoseEngineC.dir/src/imgui/backends/imgui_impl_opengl3.cpp.obj	123e418ea26ba235
+173	5336	7528777723137457	CMakeFiles/RoseEngineC.dir/src/imgui/imgui_tables.cpp.obj	5f7c382f0050a101
+43	5077	7528777721837442	CMakeFiles/RoseEngineC.dir/src/imgui/backends/imgui_impl_glfw.cpp.obj	8eec9cdbc10f80f4
+146	5803	7528777722867449	CMakeFiles/RoseEngineC.dir/src/imgui/imgui_draw.cpp.obj	67d3d71f63af811a
+15	3375	7528825117040043	CMakeFiles/RoseEngineC.dir/src/main.cpp.obj	aa9f11681b36d150
+91	7730	7528777722317448	CMakeFiles/RoseEngineC.dir/src/imgui/imgui.cpp.obj	ee52fbe306f6bf0e
+3376	4015	7528825150659397	RoseEngineC.exe	132abf72b396a791
+23	56	7528777716937539	clean	2080ed0ea3993ab
+23	775	7528823274599325	CMakeFiles/RoseEngineC.dir/src/Debug.cpp.obj	bef8649cfc7b0fbd
+45	1199	7528848278394269	CMakeFiles/RoseEngineC.dir/src/Log.cpp.obj	d000bb1b0e3823b1
+26	1640	7528848278204295	CMakeFiles/RoseEngineC.dir/src/FileSystem.cpp.obj	700519ed815ceed5
+68	3616	7528848278624275	CMakeFiles/RoseEngineC.dir/src/main.cpp.obj	aa9f11681b36d150
+26	1220	7528849469977083	CMakeFiles/RoseEngineC.dir/src/FileSystem.cpp.obj	700519ed815ceed5
+1222	1802	7528849481937001	RoseEngineC.exe	9a4b0882e4414084
+25	1608	7528850628333688	CMakeFiles/RoseEngineC.dir/src/FileSystem.cpp.obj	700519ed815ceed5
+1609	2210	7528850644177293	RoseEngineC.exe	9a4b0882e4414084
