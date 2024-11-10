@@ -222,7 +222,7 @@ int main() {
     // ourShader.setInt("texture1", 0);
     // ourShader.setInt("texture2", 1);
 
-    bool show_demo_window = true;
+    ImVec4 clear_color = ImVec4(0.6f, 0.2f, 0.7f, 1.0f);
 
     while(!glfwWindowShouldClose(window))
     {
@@ -232,7 +232,7 @@ int main() {
 
         processInput(window);
 
-        glClearColor(0.6f, 0.2f, 0.7f, 1.0f);
+        glClearColor(clear_color.x, clear_color.y, clear_color.z, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // glActiveTexture(GL_TEXTURE0);
@@ -287,7 +287,15 @@ int main() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::ShowDemoWindow(&show_demo_window);
+        ImGui::Begin("Scene");
+
+        ImGui::ColorEdit3("Background", (float*)&clear_color);
+        ImGui::Separator();
+        ImGui::Text("Light Position");
+        ImGui::SliderFloat("X", &lightPos.x, -100.0f, 100.0f);
+        ImGui::SliderFloat("Y", &lightPos.y, -100.0f, 100.0f);
+        ImGui::SliderFloat("Z", &lightPos.z, -100.0f, 100.0f);
+        ImGui::End();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -311,7 +319,7 @@ int main() {
 
 void processInput(GLFWwindow *window)
 {
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if(glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
         mixin += 0.001f;
@@ -336,10 +344,16 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         camera.ProcessKeyboard(DOWN, deltaTime);
 
-    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    static int oldstate = GLFW_RELEASE;
+    int newstate = glfwGetKey(window, GLFW_KEY_ESCAPE);
+    if (newstate == GLFW_RELEASE && oldstate == GLFW_PRESS) {
+        if(glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL) {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }else {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+    }
+    oldstate = newstate;
 }
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
@@ -360,7 +374,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
     lastX = xpos;
     lastY = ypos;
 
-    camera.ProcessMouseMovement(xoffset, yoffset);
+    camera.ProcessMouseMovement(window, xoffset, yoffset);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
